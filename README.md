@@ -7,7 +7,10 @@
 [![License](https://img.shields.io/github/license/venthe/vscode-fauxpilot)](https://github.com/Venthe/vscode-fauxpilot/blob/main/LICENSE.md)
 [![Test](https://github.com/Venthe/vscode-fauxpilot/actions/workflows/test.yml/badge.svg)](https://github.com/Venthe/vscode-fauxpilot/actions/workflows/test.yml)
 
-Please be aware! For this extension to work you have to set up [Fauxpilot server](https://github.com/moyix/fauxpilot) by @moyix
+
+Support server list:
+- [Fauxpilot server](https://github.com/moyix/fauxpilot) by @moyix
+- Compatible with openai API 
 
 ## Development
 
