@@ -102,11 +102,6 @@
           "default": {},
           "description": "File extensions to exclude from suggestions. e.g: {\"md\": true} "
         },
-        "fauxpilot.allowPending": {
-          "type": "boolean",
-          "defaultValue": true,
-          "description": "Allow wait previous request? If false, current `provideInlineCompletionItems` call will do nothing."
-        },
         "fauxpilot.requestType": {
           "type": "string",
           "default": "openai",

@@ -19,9 +19,15 @@ export class FauxpilotCompletionProvider implements InlineCompletionItemProvider
     private extConfig: WorkspaceConfiguration;
     private userPressKeyCount = 0;
 
+    private lastResponseTime: number;
+    private lastResponse: Array<InlineCompletionItem>;
+
+
     constructor(statusBar: StatusBarItem, extConfig: WorkspaceConfiguration) {
         this.statusBar = statusBar;
         this.extConfig = extConfig;
+        this.lastResponse = [];
+        this.lastResponseTime = 0;
     }
 
     //@ts-ignore
@@ -29,6 +35,13 @@ export class FauxpilotCompletionProvider implements InlineCompletionItemProvider
     public async provideInlineCompletionItems(document: TextDocument, position: Position, context: InlineCompletionContext, token: CancellationToken): ProviderResult<InlineCompletionItem[] | InlineCompletionList> {
         fauxpilotClient.log(`call inline: ${position.line}:${position.character}`);
 
+        const currentTimestamp = Date.now();
+        if (this.lastResponse.length > 0 && currentTimestamp - this.lastResponseTime < 95) {
+            var a = this.lastResponse;
+            this.lastResponse = [];
+            return a;
+        }
+        
         try {
             if (!fauxpilotClient.isEnabled) {
                 fauxpilotClient.log("Extension not enabled, skipping.");
@@ -66,7 +79,6 @@ export class FauxpilotCompletionProvider implements InlineCompletionItemProvider
                 return Promise.resolve(([] as InlineCompletionItem[]));
             }
 
-            const currentTimestamp = Date.now();
             const currentId = nextId();
             this.cachedPrompts.set(currentId, currentTimestamp);
 
@@ -105,7 +117,10 @@ export class FauxpilotCompletionProvider implements InlineCompletionItemProvider
                 //     fauxpilotClient.log('request cancelled.');
                 //     return [];
                 // }
-                var result = this.toInlineCompletions(response, position);
+                
+                const result = this.toInlineCompletions(response, position);
+                this.lastResponse = result;
+                this.lastResponseTime = Date.now();
                 fauxpilotClient.log("inline completions array length: " + result.length);
                 return result;
             }).finally(() => {
