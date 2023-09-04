@@ -16,9 +16,11 @@ export function activate(context: ExtensionContext) {
 
 	let outputChannel = window.createOutputChannel("Fauxpilot");
 	let extConfig = workspace.getConfiguration("fauxpilot");
+	const version = context.extension.packageJSON.version;
 
+	fauxpilotClient.version = version;
 	fauxpilotClient.init(extConfig, outputChannel);
-	fauxpilotClient.log("Fauxpilot start.");
+	fauxpilotClient.log("Fauxpilot start. version: " + version);
 
 	const statusUpdateCallback = (callback: any, showIcon: boolean) => async () => {
 		await callback();
@@ -29,11 +31,13 @@ export function activate(context: ExtensionContext) {
 		}
 	};
 
+	const fileFilter = extConfig.get("fileFilter", [{ pattern: "**" }]);
+	fauxpilotClient.log('fileFilter: ' + JSON.stringify(fileFilter));
+
 	context.subscriptions.push(	
 		languages.registerInlineCompletionItemProvider(
-			extConfig.get("fileFilter", [{ pattern: "**" }]), new FauxpilotCompletionProvider(statusBar, extConfig)
+			fileFilter, new FauxpilotCompletionProvider(statusBar, extConfig)
 		),
-
 		commands.registerCommand(turnOnFauxpilot.command, statusUpdateCallback(turnOnFauxpilot.callback, true)),
 		commands.registerCommand(turnOffFauxpilot.command, statusUpdateCallback(turnOffFauxpilot.callback, false)),
 		statusBar
@@ -49,6 +53,8 @@ export function activate(context: ExtensionContext) {
 	if (fauxpilotClient.isEnabled) {
 		statusBar.show();
 	}
+
+	fauxpilotClient.log('end of context activate');
 }
 
 // this method is called when your extension is deactivated

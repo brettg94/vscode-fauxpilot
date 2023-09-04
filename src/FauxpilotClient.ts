@@ -1,6 +1,11 @@
 import { WorkspaceConfiguration, OutputChannel, ConfigurationTarget } from "vscode";
 import { currentTimeString } from "./Utils";
+import { rebuildAccessBackendCache } from "./AccessBackend";
 
+export enum RequestType {
+    OpenAI,
+    Aixos
+}
 
 export class FauxpilotClient {
     private outputChannel?: OutputChannel;
@@ -13,15 +18,23 @@ export class FauxpilotClient {
     private maxTokens: number;
     private temperature: number;
     private stopWords: string[];
+    private token: string;
+    private requestType = RequestType.OpenAI;
+    private maxLines: number;
+
+    public version: string;
 
     constructor() {
         // this.outputChannel = null;
         this.excludeFileExts = [];
         this.baseUrl = '';
         this.model = '<<UNSET>>';
-        this.maxTokens = 100;
+        this.maxTokens = 80;
         this.temperature = 0.5;
         this.stopWords = [];
+        this.version = '';
+        this.token = '';
+        this.maxLines = 150;
     }
 
     public init(extConfig: WorkspaceConfiguration, channel: OutputChannel) {
@@ -47,9 +60,12 @@ export class FauxpilotClient {
         }
 
         this.model = extConfig.get("model") ?? "<<UNSET>>";
-        this.maxTokens = extConfig.get("maxTokens", 100);
+        this.maxTokens = extConfig.get("maxTokens", 80);
         this.temperature = extConfig.get("temperature", 0.5);
         this.stopWords = extConfig.get("inlineCompletion") ? ["\n"] : [];
+        this.token = extConfig.get("token", '');
+        this.requestType = extConfig.get("requestType", 'openai') === 'openai' ? RequestType.OpenAI : RequestType.Aixos;
+        this.maxLines = extConfig.get("maxLines", 150);
 
         this.log(`enabled = ${this.enabled}`);
         this.log(`baseUrl = ${this.baseUrl}`);
@@ -59,8 +75,12 @@ export class FauxpilotClient {
         this.log(`maxTokens = ${this.maxTokens}`);
         this.log(`temperature = ${this.temperature}`);
         this.log(`stopWords = ${this.stopWords}`);
+        this.log(`token = ${this.token}`);
+        this.log(`requestType = ${this.requestType}`);
+        this.log(`maxLines = ${this.maxLines}`);
+
+        rebuildAccessBackendCache();
         this.log("reload config finish.");
-        
     }
 
     public log(str: string) {
@@ -106,11 +126,23 @@ export class FauxpilotClient {
     public get MaxTokens(): number {
         return this.maxTokens;
     }
+
+    public get MaxLines(): number {
+        return this.maxLines;
+    }
     public get Temperature(): number {
         return this.temperature;
     }
     public get StopWords(): Array<string> {
         return this.stopWords;
+    }
+
+    public get Token(): string {
+        return this.token;
+    }
+
+    public get RequestType(): RequestType {
+        return this.requestType;
     }
 
 }
