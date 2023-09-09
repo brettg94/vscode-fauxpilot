@@ -117,7 +117,10 @@ export class FauxpilotCompletionProvider implements InlineCompletionItemProvider
                 //     fauxpilotClient.log('request cancelled.');
                 //     return [];
                 // }
-                
+                if (!response) {
+                    return;
+                }
+
                 const result = this.toInlineCompletions(response, position);
                 this.lastResponse = result;
                 this.lastResponseTime = Date.now();
@@ -127,6 +130,11 @@ export class FauxpilotCompletionProvider implements InlineCompletionItemProvider
                 fauxpilotClient.log("current id = " + currentId + " set request status to done");
                 this.requestStatus = "done";
                 this.cachedPrompts.delete(currentId);
+
+                if (fauxpilotClient.ResponseStatus.Status != 200) {
+                    var r = fauxpilotClient.ResponseStatus;
+                    fauxpilotClient.log("error on fetch response: " + r.Status + ", " + r.StatusText);
+                }
             });
 
         } catch (error) {

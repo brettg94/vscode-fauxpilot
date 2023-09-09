@@ -1,6 +1,6 @@
 import { WorkspaceConfiguration, OutputChannel, ConfigurationTarget } from "vscode";
 import { currentTimeString } from "./Utils";
-import { rebuildAccessBackendCache } from "./AccessBackend";
+import { rebuildAccessBackendCache, FetchResponseStatus } from "./AccessBackend";
 
 export enum RequestType {
     OpenAI,
@@ -21,6 +21,7 @@ export class FauxpilotClient {
     private token: string;
     private requestType = RequestType.OpenAI;
     private maxLines: number;
+    private responseStatus: FetchResponseStatus;
 
     public version: string;
 
@@ -35,6 +36,7 @@ export class FauxpilotClient {
         this.version = '';
         this.token = '';
         this.maxLines = 150;
+        this.responseStatus = new FetchResponseStatus(200,'');
     }
 
     public init(extConfig: WorkspaceConfiguration, channel: OutputChannel) {
@@ -143,6 +145,14 @@ export class FauxpilotClient {
 
     public get RequestType(): RequestType {
         return this.requestType;
+    }
+
+    public get ResponseStatus(): FetchResponseStatus {
+        return this.responseStatus;
+    }
+
+    public set ResponseStatus(value: FetchResponseStatus) {
+        this.responseStatus = value;
     }
 
 }

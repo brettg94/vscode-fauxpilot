@@ -2,7 +2,7 @@ import { fauxpilotClient, RequestType } from "./FauxpilotClient";
 
 // import * as http from 'http'
 // import * as https from 'https'
-import axios from "axios";
+import axios, {AxiosError} from "axios";
 import { AxiosInstance } from "axios";
 import OpenAI from 'openai';
 
@@ -14,6 +14,25 @@ const https = require('https');
 //     Currently, whether using OpenAI or axios, it is impossible to achieve keep alive.
 const httpAgent = new http.Agent({ keepAlive: true });
 const httpsAgent = new https.Agent({ keepAlive: true });
+
+export class FetchResponseStatus {
+    private status = 200;
+    private statusText = '';
+
+    constructor(status: number, statusText: string) {
+        this.status = status;
+        this.statusText = statusText;
+    }
+
+    public get Status() {
+        return this.status;
+    }
+
+    public get StatusText() {
+        return this.statusText;
+    }
+
+}
 
 
 class AccessBackendCache {
@@ -37,7 +56,12 @@ class AccessBackendCache {
     }
 
     public fetchUseAxios(data: any): Promise<OpenAI.Completion> {
-        return this.axiosInstance.post('/completions', data).then(response => response.data);
+        return this.axiosInstance.post('/completions', data).then(response => {
+            fauxpilotClient.ResponseStatus = new FetchResponseStatus(200, '');
+            return response.data
+        }, (error: AxiosError) => {
+            fauxpilotClient.ResponseStatus = new FetchResponseStatus(error.response?.status ?? 400, error.message);
+        });
     }
 }
 
