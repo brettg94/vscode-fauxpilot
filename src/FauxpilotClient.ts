@@ -22,11 +22,14 @@ export class FauxpilotClient {
     private requestType = RequestType.OpenAI;
     private maxLines: number;
     private responseStatus: FetchResponseStatus;
+    private serverMaxTokens: number;
+    private leadingLinesRatio: number;
+    private reduceLineStep: number;
 
     public version: string;
+    
 
     constructor() {
-        // this.outputChannel = null;
         this.excludeFileExts = [];
         this.baseUrl = '';
         this.model = '<<UNSET>>';
@@ -36,7 +39,10 @@ export class FauxpilotClient {
         this.version = '';
         this.token = '';
         this.maxLines = 150;
-        this.responseStatus = new FetchResponseStatus(200,'');
+        this.responseStatus = new FetchResponseStatus(200, '');
+        this.serverMaxTokens = 2048;
+        this.leadingLinesRatio = 0.185;
+        this.reduceLineStep = 1;
     }
 
     public init(extConfig: WorkspaceConfiguration, channel: OutputChannel) {
@@ -68,6 +74,8 @@ export class FauxpilotClient {
         this.token = extConfig.get("token", '');
         this.requestType = extConfig.get("requestType", 'openai') === 'openai' ? RequestType.OpenAI : RequestType.Aixos;
         this.maxLines = extConfig.get("maxLines", 150);
+        this.serverMaxTokens = extConfig.get("serverMaxTokens", 2048);
+        this.reduceLineStep = extConfig.get("reduceLineStep", 1);
 
         this.log(`enabled = ${this.enabled}`);
         this.log(`baseUrl = ${this.baseUrl}`);
@@ -80,6 +88,8 @@ export class FauxpilotClient {
         this.log(`token = ${this.token}`);
         this.log(`requestType = ${this.requestType}`);
         this.log(`maxLines = ${this.maxLines}`);
+        this.log(`serverMaxTokens = ${this.serverMaxTokens}`);
+        this.log(`reduceLineStep = ${this.reduceLineStep}`);
 
         rebuildAccessBackendCache();
         this.log("reload config finish.");
@@ -154,6 +164,19 @@ export class FauxpilotClient {
     public set ResponseStatus(value: FetchResponseStatus) {
         this.responseStatus = value;
     }
+
+    public get ServerMaxTokens(): number {
+        return this.serverMaxTokens;
+    }
+
+    public get LeadingLinesRatio(): number {
+        return this.leadingLinesRatio;
+    }
+
+    public get ReduceLineStep(): number {
+        return this.reduceLineStep;
+    }
+
 
 }
 

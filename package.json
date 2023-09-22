@@ -2,7 +2,7 @@
   "name": "fauxpilot",
   "displayName": "Fauxpilot",
   "description": "Get completions from Fauxpilot server",
-  "version": "1.1.9",
+  "version": "1.2.0",
   "icon": "assets/icon.png",
   "keywords": [
     "code-suggestion",
@@ -109,6 +109,16 @@
             "openai",
             "axios"
           ]
+        },
+        "fauxpilot.serverMaxTokens": {
+          "type": "integer",
+          "default": 1525,
+          "description": "The maximum token count for a single request to the target server. It is calculated locally using `@dqbd/tiktoken` and may differ from the server's calculation method. Before sending, it will be ensured that the number of tokens sent is less than this value. 1525 is for 2048(server)"
+        },
+        "fauxpilot.reduceLineStep": {
+          "type": "integer",
+          "default": 1,
+          "description": "The number of lines to reduce in each iteration when adjusting the token count."
         }
       }
     }
@@ -144,6 +154,7 @@
     "webpack-cli": "^4.10.0"
   },
   "dependencies": {
+    "@dqbd/tiktoken": "^1.0.7",
     "axios": "^1.5.0",
     "http": "^0.0.1-security",
     "openai": "^4.3.1"

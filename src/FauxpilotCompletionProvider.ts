@@ -5,7 +5,7 @@ import {
     TextDocument, workspace, StatusBarItem, OutputChannel, WorkspaceConfiguration, InlineCompletionTriggerKind
 } from 'vscode';
 
-import { nextId,delay } from './Utils';
+import { nextId,delay, limitTextLength } from './Utils';
 import { LEADING_LINES_PROP } from './Constants';
 import { fauxpilotClient } from './FauxpilotClient';
 import { fetch } from './AccessBackend';
@@ -55,7 +55,7 @@ export class FauxpilotCompletionProvider implements InlineCompletionItemProvider
                 return;
             }
 
-            const prompt = this.getPrompt(document, position);
+            const prompt = limitTextLength(document, position);
             let suggestionDelay = fauxpilotClient.SuggestionDelay;
             if (suggestionDelay > 0) {
                 let holdPressId = ++this.userPressKeyCount;
@@ -150,29 +150,7 @@ export class FauxpilotCompletionProvider implements InlineCompletionItemProvider
         }
     }
 
-    private getPrompt(document: TextDocument, position: Position): string {
-        const promptLinesCount = fauxpilotClient.MaxLines;
 
-        /* 
-        Put entire file in prompt if it's small enough, otherwise only
-        take lines above the cursor and from the beginning of the file.
-        */
-
-        // Only determine the content before the cursor
-        const currentLine = position.line;                 //  document.lineCount
-        if (currentLine <= promptLinesCount) {
-            const range = new Range(0, 0, position.line, position.character);
-            return document.getText(range);
-        } else {
-            const leadingLinesCount = Math.floor(LEADING_LINES_PROP * promptLinesCount);
-            const prefixLinesCount = promptLinesCount - leadingLinesCount;
-            const firstPrefixLine = Math.max(position.line - prefixLinesCount, 0);
-            
-            const leading = document.getText(new Range(0, 0, leadingLinesCount, 200));
-            const prefix = document.getText(new Range(firstPrefixLine, 0, position.line, position.character));
-            return `${leading}\n${prefix}`;
-        }
-    }
 
     private isNil(value: String | undefined | null): boolean {
         return value === undefined || value === null || value.length === 0;
