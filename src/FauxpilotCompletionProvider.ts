@@ -166,15 +166,20 @@ export class FauxpilotCompletionProvider implements InlineCompletionItemProvider
         }
         
         // it seems always return 1 choice.
-        var choice1Text = value.choices[0].text; 
+        let choice1Text = value.choices[0].text; 
         if (!choice1Text) {
             return [];
         }
 
         fauxpilotClient.log('Get choice text: ' + choice1Text);
+        const trimmedText = choice1Text.trim();
         // fauxpilotClient.log('---------END-OF-CHOICE-TEXT-----------');
-        if (choice1Text.trim().length <= 0) {
+        if (trimmedText.length <= 0) {
             return [];
+        }
+
+        if (fauxpilotClient.IsTrimResponse) {
+            choice1Text = trimmedText;
         }
 
         return [new InlineCompletionItem(choice1Text, new Range(position, position.translate(0, choice1Text.length)))];

@@ -25,6 +25,7 @@ export class FauxpilotClient {
     private serverMaxTokens: number;
     private leadingLinesRatio: number;
     private reduceLineStep: number;
+    private trimResponse = false;
 
     public version: string;
     
@@ -70,12 +71,13 @@ export class FauxpilotClient {
         this.model = extConfig.get("model") ?? "<<UNSET>>";
         this.maxTokens = extConfig.get("maxTokens", 80);
         this.temperature = extConfig.get("temperature", 0.5);
-        this.stopWords = extConfig.get("inlineCompletion") ? ["\n"] : [];
+        this.stopWords = extConfig.get("stopWordsArray", ["\n"]);
         this.token = extConfig.get("token", '');
         this.requestType = extConfig.get("requestType", 'openai') === 'openai' ? RequestType.OpenAI : RequestType.Aixos;
         this.maxLines = extConfig.get("maxLines", 150);
         this.serverMaxTokens = extConfig.get("serverMaxTokens", 2048);
         this.reduceLineStep = extConfig.get("reduceLineStep", 1);
+        this.trimResponse = extConfig.get("trimResponse", false);
 
         this.log(`enabled = ${this.enabled}`);
         this.log(`baseUrl = ${this.baseUrl}`);
@@ -90,6 +92,7 @@ export class FauxpilotClient {
         this.log(`maxLines = ${this.maxLines}`);
         this.log(`serverMaxTokens = ${this.serverMaxTokens}`);
         this.log(`reduceLineStep = ${this.reduceLineStep}`);
+        this.log(`trimResponse = ${this.trimResponse}`);
 
         rebuildAccessBackendCache();
         this.log("reload config finish.");
@@ -175,6 +178,10 @@ export class FauxpilotClient {
 
     public get ReduceLineStep(): number {
         return this.reduceLineStep;
+    }
+
+    public get IsTrimResponse(): boolean {
+        return this.trimResponse;
     }
 
 

@@ -2,7 +2,7 @@
   "name": "fauxpilot",
   "displayName": "Fauxpilot",
   "description": "Get completions from Fauxpilot server",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "icon": "assets/icon.png",
   "keywords": [
     "code-suggestion",
@@ -84,10 +84,6 @@
           "type": "boolean",
           "default": true
         },
-        "fauxpilot.inlineCompletion": {
-          "type": "boolean",
-          "default": true
-        },
         "fauxpilot.fileFilter": {
           "type": "array",
           "default": [
@@ -119,6 +115,15 @@
           "type": "integer",
           "default": 1,
           "description": "The number of lines to reduce in each iteration when adjusting the token count."
+        },
+        "fauxpilot.stopWordsArray" :{
+          "type":"array",
+          "default": ["\n"],
+          "description": "Valid options: empty array, \\n.  You cannot expect other values to take effect. This should be a backend issue, not a problem with this plugin."
+        },
+        "fauxpilot.trimResponse": {
+          "type":"boolean",
+          "default": false
         }
       }
     }
