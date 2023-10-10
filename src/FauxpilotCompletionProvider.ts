@@ -150,8 +150,6 @@ export class FauxpilotCompletionProvider implements InlineCompletionItemProvider
         }
     }
 
-
-
     private isNil(value: String | undefined | null): boolean {
         return value === undefined || value === null || value.length === 0;
     }
@@ -178,8 +176,21 @@ export class FauxpilotCompletionProvider implements InlineCompletionItemProvider
             return [];
         }
 
-        if (fauxpilotClient.IsTrimResponse) {
-            choice1Text = trimmedText;
+        if (fauxpilotClient.IsTrim1stLineBreak) {
+            const lineIndex = choice1Text.indexOf("\n");
+            if (lineIndex >= 0) {
+                let erase = true; 
+                for (let i = 0; i < lineIndex; i++){
+                    if (choice1Text[i] != " ") {
+                        erase = false;
+                        break;
+                    }
+                }
+
+                if (erase) {
+                    choice1Text = choice1Text.substring(lineIndex + 1);
+                }
+            }
         }
 
         return [new InlineCompletionItem(choice1Text, new Range(position, position.translate(0, choice1Text.length)))];

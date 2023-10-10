@@ -121,7 +121,7 @@
           "default": ["\n"],
           "description": "Valid options: empty array, \\n.  You cannot expect other values to take effect. This should be a backend issue, not a problem with this plugin."
         },
-        "fauxpilot.trimResponse": {
+        "fauxpilot.trim1stLineBreak": {
           "type":"boolean",
           "default": false
         }

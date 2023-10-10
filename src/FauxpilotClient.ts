@@ -25,7 +25,7 @@ export class FauxpilotClient {
     private serverMaxTokens: number;
     private leadingLinesRatio: number;
     private reduceLineStep: number;
-    private trimResponse = false;
+    private trim1stLineBreak = false;
 
     public version: string;
     
@@ -77,7 +77,7 @@ export class FauxpilotClient {
         this.maxLines = extConfig.get("maxLines", 150);
         this.serverMaxTokens = extConfig.get("serverMaxTokens", 2048);
         this.reduceLineStep = extConfig.get("reduceLineStep", 1);
-        this.trimResponse = extConfig.get("trimResponse", false);
+        this.trim1stLineBreak = extConfig.get("trim1stLineBreak", false);
 
         this.log(`enabled = ${this.enabled}`);
         this.log(`baseUrl = ${this.baseUrl}`);
@@ -92,7 +92,7 @@ export class FauxpilotClient {
         this.log(`maxLines = ${this.maxLines}`);
         this.log(`serverMaxTokens = ${this.serverMaxTokens}`);
         this.log(`reduceLineStep = ${this.reduceLineStep}`);
-        this.log(`trimResponse = ${this.trimResponse}`);
+        this.log(`trim1stLineBreak = ${this.trim1stLineBreak}`);
 
         rebuildAccessBackendCache();
         this.log("reload config finish.");
@@ -180,9 +180,11 @@ export class FauxpilotClient {
         return this.reduceLineStep;
     }
 
-    public get IsTrimResponse(): boolean {
-        return this.trimResponse;
+    public get IsTrim1stLineBreak(): boolean {
+        return this.trim1stLineBreak;
     }
+
+
 
 
 }
