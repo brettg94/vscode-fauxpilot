@@ -2,7 +2,7 @@
   "name": "fauxpilot",
   "displayName": "Fauxpilot",
   "description": "Get completions from Fauxpilot server",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "icon": "assets/icon.png",
   "keywords": [
     "code-suggestion",
@@ -123,7 +123,13 @@
         },
         "fauxpilot.trim1stLineBreak": {
           "type":"boolean",
-          "default": false
+          "default": false,
+          "description": "Should it be removed if there are no characters before the first `\\n`, or if there are only spaces?"
+        },
+        "fauxpilot.resendIfEmptyResponse" : {
+          "type": "boolean",
+          "default" : false,
+          "description": "If `\\n` is in the `stopWordsArray` array and an empty response is received this time, should we resend the request? The new request will remove `\\n` from the `stopWordsArray` array."
         }
       }
     }

@@ -26,6 +26,8 @@ export class FauxpilotClient {
     private leadingLinesRatio: number;
     private reduceLineStep: number;
     private trim1stLineBreak = false;
+    private resendIfEmptyResponse = false;
+    private fetchWithoutLineBreak = false;
 
     public version: string;
     
@@ -78,6 +80,7 @@ export class FauxpilotClient {
         this.serverMaxTokens = extConfig.get("serverMaxTokens", 2048);
         this.reduceLineStep = extConfig.get("reduceLineStep", 1);
         this.trim1stLineBreak = extConfig.get("trim1stLineBreak", false);
+        this.resendIfEmptyResponse = extConfig.get("resendIfEmptyResponse", false);
 
         this.log(`enabled = ${this.enabled}`);
         this.log(`baseUrl = ${this.baseUrl}`);
@@ -93,6 +96,7 @@ export class FauxpilotClient {
         this.log(`serverMaxTokens = ${this.serverMaxTokens}`);
         this.log(`reduceLineStep = ${this.reduceLineStep}`);
         this.log(`trim1stLineBreak = ${this.trim1stLineBreak}`);
+        this.log(`resendIfEmptyResponse = ${this.resendIfEmptyResponse}`);
 
         rebuildAccessBackendCache();
         this.log("reload config finish.");
@@ -184,9 +188,18 @@ export class FauxpilotClient {
         return this.trim1stLineBreak;
     }
 
+    public get ResendIfEmptyResponse(): boolean {
+        return this.resendIfEmptyResponse;
+    }
 
+    public get IsFetchWithoutLineBreak(): boolean {
+        return this.fetchWithoutLineBreak;
+    }
 
-
+    public set IsFetchWithoutLineBreak(value: boolean) {
+        this.fetchWithoutLineBreak = value;
+    }
+    
 }
 
 const client = new FauxpilotClient();

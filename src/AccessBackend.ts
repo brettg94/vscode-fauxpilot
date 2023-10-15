@@ -79,14 +79,18 @@ function getCache(): AccessBackendCache {
     return cacheInScript;
 }
 
-export function fetch(prompt: string): Promise<OpenAI.Completion> {
+export function fetch(prompt: string, removedStopWord: string = ""): Promise<OpenAI.Completion> {
+
+    const tmpStopWords = removedStopWord && removedStopWord.length > 0
+        ? fauxpilotClient.StopWords.filter(word => word !== removedStopWord) : fauxpilotClient.StopWords;
+    fauxpilotClient.log("tmpStopWords: " + JSON.stringify(tmpStopWords));
 
     const data = {
         model: fauxpilotClient.Model,
         prompt: prompt,
         max_tokens: fauxpilotClient.MaxTokens,
         temperature: fauxpilotClient.Temperature,
-        stop: fauxpilotClient.StopWords
+        stop: tmpStopWords
     };
 
     if (fauxpilotClient.RequestType == RequestType.OpenAI) {
