@@ -34,36 +34,49 @@ function numTokensFromString(message: string) {
 
 // limit text length by serverMaxTokens
 export function limitTextLength(doc: TextDocument, pos: Position): string {
-    // 
     let headRatio = fauxpilotClient.LeadingLinesRatio;
-    let promptLinesCount = fauxpilotClient.MaxLines;
-    const step = fauxpilotClient.ReduceLineStep;
-    const ratioReduce = step / promptLinesCount;
+    let high = fauxpilotClient.MaxLines;
+    let low = 0;
+    let str = '';
+    let tokenCount = 0;
+    const tryTimes = fauxpilotClient.ReduceLineTryTimes;
 
-    while (true) {
-        const str = getPrompt(doc, pos, headRatio, promptLinesCount);
+
+    // First, try with MaxLines
+    str = getPrompt(doc, pos, headRatio, high);
+    if (!str || (typeof str === 'string' && str.length <= 0)) {
+        return '';
+    }
+
+    tokenCount = numTokensFromString(str);
+    if (tokenCount < fauxpilotClient.ServerMaxTokens) {
+        fauxpilotClient.log(`send token count: ${tokenCount}`);
+        return str;
+    }
+
+    // If token count is too high, use binary search
+    let binarySearchCount = 0;
+    while (low <= high && binarySearchCount < tryTimes) {
+        const mid = Math.floor((low + high) / 2);
+        str = getPrompt(doc, pos, headRatio, mid);
         if (!str || (typeof str === 'string' && str.length <= 0)) {
             return '';
         }
 
-        const tokenCount = numTokensFromString(str); 
+        tokenCount = numTokensFromString(str);
         if (tokenCount < fauxpilotClient.ServerMaxTokens) {
-            fauxpilotClient.log(`send token count: ${tokenCount}`);
-            return str;
+            low = mid + 1;
+        } else {
+            high = mid - 1;
         }
-        
-        // reduce 2 line once
-        if ((promptLinesCount -= step) <= 0) {
-            return '';
-        }
-        
-        headRatio = Math.max(0.105, headRatio - ratioReduce);
 
-        fauxpilotClient.log(`reach max token count, current token count: ${tokenCount}, promptLinesCount: ${promptLinesCount}, headRatio: ${headRatio}`);
+        binarySearchCount++;
     }
 
-    return '';
+    fauxpilotClient.log(`send token count: ${tokenCount}`);
+    return getPrompt(doc, pos, headRatio, high);
 }
+
 
 function getPrompt(document: TextDocument, position: Position, headRatio: number, promptLinesCount: number): string {
 

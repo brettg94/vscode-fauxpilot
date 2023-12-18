@@ -2,7 +2,7 @@
   "name": "fauxpilot",
   "displayName": "Fauxpilot",
   "description": "Get completions from Fauxpilot server",
-  "version": "1.2.2",
+  "version": "10.0.1",
   "icon": "assets/icon.png",
   "keywords": [
     "code-suggestion",
@@ -11,7 +11,7 @@
     "fauxpilot"
   ],
   "repository": {
-    "url": "https://github.com/Venthe/vscode-fauxpilot"
+    "url": "https://github.com/Aincvy/vscode-fauxpilot"
   },
   "license": "MIT",
   "publisher": "Venthe",
@@ -19,7 +19,7 @@
     "vscode": "^1.70.0"
   },
   "bugs": {
-    "url": "https://github.com/Venthe/vscode-fauxpilot/issues"
+    "url": "https://github.com/Aincvy/vscode-fauxpilot/issues"
   },
   "categories": [
     "Other"
@@ -111,11 +111,6 @@
           "default": 1525,
           "description": "The maximum token count for a single request to the target server. It is calculated locally using `@dqbd/tiktoken` and may differ from the server's calculation method. Before sending, it will be ensured that the number of tokens sent is less than this value. 1525 is for 2048(server)"
         },
-        "fauxpilot.reduceLineStep": {
-          "type": "integer",
-          "default": 1,
-          "description": "The number of lines to reduce in each iteration when adjusting the token count."
-        },
         "fauxpilot.stopWordsArray" :{
           "type":"array",
           "default": ["\n"],
@@ -130,6 +125,11 @@
           "type": "boolean",
           "default" : false,
           "description": "If `\\n` is in the `stopWordsArray` array and an empty response is received this time, should we resend the request? The new request will remove `\\n` from the `stopWordsArray` array."
+        },
+        "fauxpilot.reduceLineTryTimes" : {
+          "type":"number",
+          "default": 2,
+          "description": "When the estimated number of tokens exceeds the limit, binary search will be used to reduce the number of lines. This parameter controls the maximum number of binary search iterations."
         }
       }
     }

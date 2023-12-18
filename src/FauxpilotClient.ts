@@ -24,7 +24,7 @@ export class FauxpilotClient {
     private responseStatus: FetchResponseStatus;
     private serverMaxTokens: number;
     private leadingLinesRatio: number;
-    private reduceLineStep: number;
+    private reduceLineTryTimes: number;
     private trim1stLineBreak = false;
     private resendIfEmptyResponse = false;
     private fetchWithoutLineBreak = false;
@@ -45,7 +45,7 @@ export class FauxpilotClient {
         this.responseStatus = new FetchResponseStatus(200, '');
         this.serverMaxTokens = 2048;
         this.leadingLinesRatio = 0.185;
-        this.reduceLineStep = 1;
+        this.reduceLineTryTimes = 2;
     }
 
     public init(extConfig: WorkspaceConfiguration, channel: OutputChannel) {
@@ -78,7 +78,7 @@ export class FauxpilotClient {
         this.requestType = extConfig.get("requestType", 'openai') === 'openai' ? RequestType.OpenAI : RequestType.Aixos;
         this.maxLines = extConfig.get("maxLines", 150);
         this.serverMaxTokens = extConfig.get("serverMaxTokens", 2048);
-        this.reduceLineStep = extConfig.get("reduceLineStep", 1);
+        this.reduceLineTryTimes = extConfig.get("reduceLineTryTimes", 2);
         this.trim1stLineBreak = extConfig.get("trim1stLineBreak", false);
         this.resendIfEmptyResponse = extConfig.get("resendIfEmptyResponse", false);
 
@@ -94,7 +94,7 @@ export class FauxpilotClient {
         this.log(`requestType = ${this.requestType}`);
         this.log(`maxLines = ${this.maxLines}`);
         this.log(`serverMaxTokens = ${this.serverMaxTokens}`);
-        this.log(`reduceLineStep = ${this.reduceLineStep}`);
+        this.log(`reduceLineTryTimes = ${this.reduceLineTryTimes}`);
         this.log(`trim1stLineBreak = ${this.trim1stLineBreak}`);
         this.log(`resendIfEmptyResponse = ${this.resendIfEmptyResponse}`);
 
@@ -180,8 +180,8 @@ export class FauxpilotClient {
         return this.leadingLinesRatio;
     }
 
-    public get ReduceLineStep(): number {
-        return this.reduceLineStep;
+    public get ReduceLineTryTimes(): number {
+        return this.reduceLineTryTimes;
     }
 
     public get IsTrim1stLineBreak(): boolean {
