@@ -13,6 +13,7 @@ import { fetch } from './AccessBackend';
 
 export class FauxpilotCompletionProvider implements InlineCompletionItemProvider {
     cachedPrompts: Map<string, number> = new Map<string, number>();
+
     private requestStatus: string = "done";
     private statusBar: StatusBarItem;
     private extConfig: WorkspaceConfiguration;
