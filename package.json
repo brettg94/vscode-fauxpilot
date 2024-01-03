@@ -131,7 +131,7 @@
           "default": 2,
           "description": "When the estimated number of tokens exceeds the limit, binary search will be used to reduce the number of lines. This parameter controls the maximum number of binary search iterations."
         },
-        "fauxpilot.trimLeftWhitespace": {
+        "fauxpilot.trimLeadingWhitespace": {
           "type": "boolean",
           "default": false,
           "description": "Trim leading whitespaces from returned text if the prompt ends in whitespace or if there are multiple white spaces returned."
