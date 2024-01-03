@@ -28,6 +28,7 @@ export class FauxpilotClient {
     private trim1stLineBreak = false;
     private resendIfEmptyResponse = false;
     private fetchWithoutLineBreak = false;
+    private trimLeadingWhitespace = false;
 
     public version: string;
     
@@ -81,6 +82,7 @@ export class FauxpilotClient {
         this.reduceLineTryTimes = extConfig.get("reduceLineTryTimes", 2);
         this.trim1stLineBreak = extConfig.get("trim1stLineBreak", false);
         this.resendIfEmptyResponse = extConfig.get("resendIfEmptyResponse", false);
+        this.trimLeadingWhitespace = extConfig.get("trimLeadingWhitespace", false);
 
         this.log(`enabled = ${this.enabled}`);
         this.log(`baseUrl = ${this.baseUrl}`);
@@ -97,6 +99,7 @@ export class FauxpilotClient {
         this.log(`reduceLineTryTimes = ${this.reduceLineTryTimes}`);
         this.log(`trim1stLineBreak = ${this.trim1stLineBreak}`);
         this.log(`resendIfEmptyResponse = ${this.resendIfEmptyResponse}`);
+        this.log(`trimLeadingWhitespace = ${this.trimLeadingWhitespace}`);
 
         rebuildAccessBackendCache();
         this.log("reload config finish.");
@@ -198,6 +201,10 @@ export class FauxpilotClient {
 
     public set IsFetchWithoutLineBreak(value: boolean) {
         this.fetchWithoutLineBreak = value;
+    }
+
+    public get TrimLeadingWhitespace(): boolean {
+        return this.trimLeadingWhitespace;
     }
     
 }

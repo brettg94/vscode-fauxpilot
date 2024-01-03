@@ -152,7 +152,7 @@ export class FauxpilotCompletionProvider implements InlineCompletionItemProvider
             }
 
             fauxpilotClient.IsFetchWithoutLineBreak = false;
-            const result = this.toInlineCompletions(response, position);
+            const result = this.toInlineCompletions(response, position, promptStr);
             if (result.length == 0 && fauxpilotClient.IsFetchWithoutLineBreak) {
                 if (token.isCancellationRequested) {
                     fauxpilotClient.log('request cancelled.');
@@ -180,7 +180,7 @@ export class FauxpilotCompletionProvider implements InlineCompletionItemProvider
         return Array.from(this.cachedPrompts.values()).reduce((a, b) => Math.max(a, b));
     }
 
-    private toInlineCompletions(value: OpenAI.Completion, position: Position): InlineCompletionItem[] {
+    private toInlineCompletions(value: OpenAI.Completion, position: Position, promptStr: string): InlineCompletionItem[] {
         if (!value.choices) {
             return [];
         }
@@ -214,6 +214,16 @@ export class FauxpilotCompletionProvider implements InlineCompletionItemProvider
                     choice1Text = choice1Text.substring(lineIndex + 1);
                 }
             }
+        }
+
+        if (fauxpilotClient.TrimLeadingWhitespace) {
+            const trailingWhiteSpace = promptStr.endsWith(" ");
+            if (trailingWhiteSpace) {
+                // Remove all leading whitespace from choice1Text
+                choice1Text = choice1Text.trimStart();
+            }
+            // Remove all but one leading whitespace
+            choice1Text = choice1Text.replace(/^\s+/, ' ');
         }
 
         return [new InlineCompletionItem(choice1Text, new Range(position, position.translate(0, choice1Text.length)))];
