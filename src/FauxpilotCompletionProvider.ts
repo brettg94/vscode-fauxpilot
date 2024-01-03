@@ -6,7 +6,6 @@ import {
 } from 'vscode';
 
 import { nextId,delay, limitTextLength } from './Utils';
-import { LEADING_LINES_PROP } from './Constants';
 import { fauxpilotClient } from './FauxpilotClient';
 import { fetch } from './AccessBackend';
 
@@ -197,23 +196,6 @@ export class FauxpilotCompletionProvider implements InlineCompletionItemProvider
                 fauxpilotClient.IsFetchWithoutLineBreak = fauxpilotClient.StopWords.includes("\n");
             }
             return [];
-        }
-
-        if (fauxpilotClient.IsTrim1stLineBreak) {
-            const lineIndex = choice1Text.indexOf("\n");
-            if (lineIndex >= 0) {
-                let erase = true; 
-                for (let i = 0; i < lineIndex; i++){
-                    if (choice1Text[i] != " ") {
-                        erase = false;
-                        break;
-                    }
-                }
-
-                if (erase) {
-                    choice1Text = choice1Text.substring(lineIndex + 1);
-                }
-            }
         }
 
         if (fauxpilotClient.TrimLeadingWhitespace) {

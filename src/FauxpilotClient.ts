@@ -25,7 +25,6 @@ export class FauxpilotClient {
     private serverMaxTokens: number;
     private leadingLinesRatio: number;
     private reduceLineTryTimes: number;
-    private trim1stLineBreak = false;
     private resendIfEmptyResponse = false;
     private fetchWithoutLineBreak = false;
     private trimLeadingWhitespace = false;
@@ -80,7 +79,6 @@ export class FauxpilotClient {
         this.maxLines = extConfig.get("maxLines", 150);
         this.serverMaxTokens = extConfig.get("serverMaxTokens", 2048);
         this.reduceLineTryTimes = extConfig.get("reduceLineTryTimes", 2);
-        this.trim1stLineBreak = extConfig.get("trim1stLineBreak", false);
         this.resendIfEmptyResponse = extConfig.get("resendIfEmptyResponse", false);
         this.trimLeadingWhitespace = extConfig.get("trimLeadingWhitespace", false);
 
@@ -97,7 +95,6 @@ export class FauxpilotClient {
         this.log(`maxLines = ${this.maxLines}`);
         this.log(`serverMaxTokens = ${this.serverMaxTokens}`);
         this.log(`reduceLineTryTimes = ${this.reduceLineTryTimes}`);
-        this.log(`trim1stLineBreak = ${this.trim1stLineBreak}`);
         this.log(`resendIfEmptyResponse = ${this.resendIfEmptyResponse}`);
         this.log(`trimLeadingWhitespace = ${this.trimLeadingWhitespace}`);
 
@@ -186,11 +183,7 @@ export class FauxpilotClient {
     public get ReduceLineTryTimes(): number {
         return this.reduceLineTryTimes;
     }
-
-    public get IsTrim1stLineBreak(): boolean {
-        return this.trim1stLineBreak;
-    }
-
+    
     public get ResendIfEmptyResponse(): boolean {
         return this.resendIfEmptyResponse;
     }

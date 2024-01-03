@@ -2,7 +2,7 @@
   "name": "fauxpilot",
   "displayName": "Fauxpilot",
   "description": "Get completions from Fauxpilot server",
-  "version": "10.0.1",
+  "version": "10.0.2",
   "icon": "assets/icon.png",
   "keywords": [
     "code-suggestion",
@@ -116,11 +116,6 @@
           "default": ["\n"],
           "description": "Valid options: empty array, \\n.  You cannot expect other values to take effect. This should be a backend issue, not a problem with this plugin."
         },
-        "fauxpilot.trim1stLineBreak": {
-          "type":"boolean",
-          "default": false,
-          "description": "Should it be removed if there are no characters before the first `\\n`, or if there are only spaces?"
-        },
         "fauxpilot.resendIfEmptyResponse" : {
           "type": "boolean",
           "default" : false,
@@ -133,7 +128,7 @@
         },
         "fauxpilot.trimLeadingWhitespace": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "description": "Trim leading whitespaces from returned text if the prompt ends in whitespace or if there are multiple white spaces returned."
         }
       }
