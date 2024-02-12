@@ -294,6 +294,8 @@ export class FauxpilotCompletionProvider
       const pattern = `^[ \t\r\f]{0,${startWhitespaceTrim}}`;
       choice1Text = choice1Text.replace(new RegExp(pattern), "");
     }
+
+    const choice1Line = choice1Text.split("\n")[0];
     // if (fauxpilotClient.TrimLeadingWhitespace) {
     //   const trailingWhiteSpace = promptStr.endsWith(" ");
     //   if (trailingWhiteSpace) {
@@ -305,6 +307,10 @@ export class FauxpilotCompletionProvider
     // }
 
     return [
+      new InlineCompletionItem(
+        choice1Line,
+        new Range(position, position.translate(0, choice1Line.length))
+      ),
       new InlineCompletionItem(
         choice1Text,
         new Range(position, position.translate(0, choice1Text.length))
