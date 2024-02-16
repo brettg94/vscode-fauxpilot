@@ -45,6 +45,7 @@ export class FauxpilotCompletionProvider
   public async provideInlineCompletionItems(
     document: TextDocument,
     position: Position,
+    //@ts-ignore
     context: InlineCompletionContext,
     token: CancellationToken
     //@ts-ignore
@@ -258,6 +259,7 @@ export class FauxpilotCompletionProvider
   private toInlineCompletions(
     value: OpenAI.Completion,
     position: Position,
+    //@ts-ignore
     promptStr: string,
     startWhitespaceTrim: number = 0
   ): InlineCompletionItem[] {

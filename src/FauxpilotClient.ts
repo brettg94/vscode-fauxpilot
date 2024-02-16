@@ -24,6 +24,7 @@ export class FauxpilotClient {
   private model: string;
   private maxTokens: number;
   private temperature: number;
+  private minP: number;
   private stopWords: string[];
   private token: string;
   private requestType = RequestType.OpenAI;
@@ -35,6 +36,7 @@ export class FauxpilotClient {
   private resendIfEmptyResponse = false;
   private fetchWithoutLineBreak = false;
   private trimLeadingWhitespace = false;
+  private negativePrompt: string | undefined;
 
   public version: string;
 
@@ -44,6 +46,7 @@ export class FauxpilotClient {
     this.model = "<<UNSET>>";
     this.maxTokens = 80;
     this.temperature = 0.5;
+    this.minP = 0.1;
     this.stopWords = [];
     this.version = "";
     this.token = "";
@@ -52,6 +55,7 @@ export class FauxpilotClient {
     this.serverMaxTokens = 2048;
     this.leadingLinesRatio = 0.185;
     this.reduceLineTryTimes = 2;
+    this.negativePrompt = undefined;
   }
 
   public init(extConfig: WorkspaceConfiguration, channel: OutputChannel) {
@@ -81,6 +85,7 @@ export class FauxpilotClient {
     this.model = extConfig.get("model") ?? "<<UNSET>>";
     this.maxTokens = extConfig.get("maxTokens", 80);
     this.temperature = extConfig.get("temperature", 0.5);
+    this.minP = extConfig.get("minP", 0.1);
     this.stopWords = extConfig.get("stopWordsArray", ["\n"]);
     this.token = extConfig.get("token", "");
     this.requestType =
@@ -92,6 +97,7 @@ export class FauxpilotClient {
     this.reduceLineTryTimes = extConfig.get("reduceLineTryTimes", 2);
     this.resendIfEmptyResponse = extConfig.get("resendIfEmptyResponse", false);
     this.trimLeadingWhitespace = extConfig.get("trimLeadingWhitespace", false);
+    this.negativePrompt = extConfig.get("negativePrompt", undefined);
 
     this.log(`enabled = ${this.enabled}`);
     this.log(`baseUrl = ${this.baseUrl}`);
@@ -100,6 +106,7 @@ export class FauxpilotClient {
     this.log(`model = ${this.model}`);
     this.log(`maxTokens = ${this.maxTokens}`);
     this.log(`temperature = ${this.temperature}`);
+    this.log(`minP = ${this.minP}`);
     this.log(`stopWords = ${this.stopWords}`);
     this.log(`token = ${this.token}`);
     this.log(`requestType = ${this.requestType}`);
@@ -108,6 +115,7 @@ export class FauxpilotClient {
     this.log(`reduceLineTryTimes = ${this.reduceLineTryTimes}`);
     this.log(`resendIfEmptyResponse = ${this.resendIfEmptyResponse}`);
     this.log(`trimLeadingWhitespace = ${this.trimLeadingWhitespace}`);
+    this.log(`negativePrompt = ${this.negativePrompt}`);
 
     rebuildAccessBackendCache();
     this.log("reload config finish.");
@@ -160,9 +168,15 @@ export class FauxpilotClient {
   public get MaxLines(): number {
     return this.maxLines;
   }
+
   public get Temperature(): number {
     return this.temperature;
   }
+
+  public get MinP(): number {
+    return this.minP;
+  }
+
   public get StopWords(): Array<string> {
     return this.stopWords;
   }
@@ -209,6 +223,10 @@ export class FauxpilotClient {
 
   public get TrimLeadingWhitespace(): boolean {
     return this.trimLeadingWhitespace;
+  }
+
+  public get NegativePrompt(): string | undefined {
+    return this.negativePrompt;
   }
 }
 
